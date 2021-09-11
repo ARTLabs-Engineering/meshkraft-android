@@ -31,6 +31,50 @@ android {
     }
 }
 
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = 'com.mertgolcu.meshkraft'
+                artifactId = 'Meshkraft'
+                version = '1.0.0'
+            }
+            // Creates a Maven publication called “debug”.
+            debug(MavenPublication) {
+                // Applies the component for the debug build variant.
+                from components.debug
+
+                groupId = 'com.mertgolcu.meshkraft'
+                artifactId = 'Meshkraft-debug'
+                version = '1.0.0'
+            }
+        }
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                /** Configure path of your package repository on Github
+                 *  Replace GITHUB_USERID with your/organisation Github userID and REPOSITORY with the repository name on GitHub
+                 */
+                url = uri("https://maven.pkg.github.com/mgolcu00/Meshkraft-Android")
+
+                credentials {
+                    /**Create github.properties in root project folder file with gpr.usr=GITHUB_USER_ID  & gpr.key=PERSONAL_ACCESS_TOKEN**/
+                    username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
+                    password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
+                }
+            }
+        }
+    }
+}
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.6.0'
