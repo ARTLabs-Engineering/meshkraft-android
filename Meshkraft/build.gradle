@@ -51,35 +51,27 @@ dependencies {
 def githubProperties = new Properties()
 githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
 
-def getVersionName = { ->
-    return "1.0.1"  // Replace with version Name
-}
-def getArtifactId = { ->
-    return "Meshkraft" // Replace with library name ID
-}
-
 afterEvaluate {
     publishing {
-
         publications {
-            bar(MavenPublication) {
-                groupId 'com.mertgolcu.meshkraft' // Replace with group ID
-                artifactId getArtifactId()
-                version getVersionName()
-                artifact("$buildDir/outputs/aar/${getArtifactId()}-release.aar")
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.mertgolcu.meshkraft'
+                artifactId = 'meshkraft'
+                version = '1.0.0'
+            }
+            debug(MavenPublication) {
+                from components.debug
+                groupId = 'com.mertgolcu.meshkraft'
+                artifactId = 'meshkraft-debug'
+                version = '1.0.0'
             }
         }
-
         repositories {
             maven {
                 name = "GitHubPackages"
-                /** Configure path of your package repository on Github
-                 *  Replace GITHUB_USERID with your/organisation Github userID and REPOSITORY with the repository name on GitHub
-                 */
                 url = uri("https://maven.pkg.github.com/mgolcu00/Meshkraft-Android")
-
                 credentials {
-                    /**Create github.properties in root project folder file with gpr.usr=GITHUB_USER_ID  & gpr.key=PERSONAL_ACCESS_TOKEN**/
                     username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
                     password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
                 }
@@ -87,4 +79,3 @@ afterEvaluate {
         }
     }
 }
-
