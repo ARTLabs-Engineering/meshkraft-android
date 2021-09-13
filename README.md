@@ -1,12 +1,11 @@
 # Meshkraft-Android
-[![Version](https://img.shields.io/badge/Version-v0.0.1-orange)](https://cocoapods.org/pods/Meshkraft)
-[![License](https://img.shields.io/cocoapods/l/Meshkraft.svg?style=flat)](https://cocoapods.org/pods/Meshkraft)
+[![](https://jitpack.io/v/ARTLabs-Engineering/Meshkraft-Android.svg)](https://jitpack.io/#ARTLabs-Engineering/Meshkraft-Android)
 [![Platform](https://img.shields.io/badge/Platform-Android-green)](https://cocoapods.org/pods/Meshkraft)
 
 ART Labs introduces tailor-made AR-commerce. A specially designed, effortless, 3D-powered boost for eCommerce.
 
 ## Installation
-```
+```gradle
 allprojects {
 		repositories {
 			...
@@ -15,7 +14,7 @@ allprojects {
 	}
 ```
 
-```
+```gradle
 dependencies {
         implementation 'com.github.ARTLabs-Engineering.Meshkraft-Android:meshkraft:1.2.0'
 	}
@@ -23,17 +22,26 @@ dependencies {
 
 ## Usage
 
-1. Add The Following yo Your `Application``onCreate` method.
+### Kotlin
+1. Add The Following Application class.
 ```Kotlin
-Meshkraft.setApiKey("TOKEN")
+class MyApplication:Application() {
+    override fun onCreate() {
+        super.onCreate()
+        Mashkraft.setApiKey("TOKEN_HERE")
+    }
+
+}
 ```
 Make sure to replace `YOUR_API_KEY` with your application token.
+
 
 #### AR Session
 
 ```Kotlin
 Meshkraft.startArSession(context,"PRODUCT_SKU")
 ```
+
 
 ```Kotlin
  MeshKraft.apply {
@@ -56,3 +64,6 @@ You can check if AR is supported on the device:
 ```Kotlin
 Meshkraft.isARSupported(context)
 ```
+
+### Java
+ !coming soon...
