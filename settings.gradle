@@ -7,5 +7,4 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Meshkraft"
-include ':app'
 include ':Meshkraft'
