@@ -6,4 +6,6 @@ dependencyResolutionManagement {
         jcenter() // Warning: this repository is going to shut down soon
     }
 }
-rootProject.name = "Meshkraft"
+rootProject.name = "TestApp"
+include ':app'
+include ':Meshkraft'
