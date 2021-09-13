@@ -58,19 +58,19 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.mertgolcu.meshkraft'
                 artifactId = 'meshkraft'
-                version = '1.1.0'
+                version = '1.1.2'
             }
             debug(MavenPublication) {
                 from components.debug
                 groupId = 'com.mertgolcu.meshkraft'
                 artifactId = 'meshkraft-debug'
-                version = '1.1.0'
+                version = '1.1.2'
             }
         }
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/mgolcu00/Meshkraft-Android")
+                url = uri("https://maven.pkg.github.com/ARTLabs-Engineering/Meshkraft-Android")
                 credentials {
                     username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
                     password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
