@@ -79,7 +79,7 @@ object Meshkraft {
                     if (model != null) {
                         startARCore(
                             context = context,
-                            url = model.file?.url!!,
+                            url = model.url!!,
                             title = name,
                         )
                     } else
@@ -93,11 +93,9 @@ object Meshkraft {
     }
 
     private fun loadModel(data: Product): Model? {
-        if (data.models != null) {
-            for (model in data.models) {
-                if (model.type == FILE_TYPE) {
-                    return model
-                }
+        if (data.assets != null) {
+            if (data.assets.glb != null) {
+                return data.assets.glb
             }
         }
         return null
