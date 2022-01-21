@@ -28,7 +28,7 @@ dependencies {
 class MyApplication:Application() {
     override fun onCreate() {
         super.onCreate()
-        Mashkraft.setApiKey("TOKEN_HERE")
+        Meshkraft.setApiKey("TOKEN_HERE")
     }
 
 }
@@ -39,12 +39,12 @@ Make sure to replace `YOUR_API_KEY` with your application token.
 #### AR Session
 
 ```Kotlin
-Meshkraft.startArSession(context,"PRODUCT_SKU")
+Meshkraft.startARSession(context,"PRODUCT_SKU")
 ```
 
 
 ```Kotlin
- MeshKraft.apply {
+ Meshkraft.apply {
                 onFail={message ->
                     // product fail state
                 }
