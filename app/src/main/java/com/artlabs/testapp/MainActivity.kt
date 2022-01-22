@@ -20,24 +20,24 @@ class MainActivity : AppCompatActivity() {
         textView = findViewById(R.id.text_view)
         button = findViewById(R.id.button)
 
-        Meshkraft.setApiKey("phTzrnocCq2bFfWAbtz8CFxuCAXvfVyaK3VrCeJpUD")
+        Meshkraft.setApiKey("API_KEY")
 
         button.setOnClickListener {
             Meshkraft.startArSession(
                 context = this,
-                sku = "HBV00000MML21",
+                sku = "ProductSKU",
                 mode = Mode.PREFERRED_3D,
                 listener = object : IMeshkraftState {
                     override fun onLoading() {
-                        textView.text = "Yükleniyor..."
+                        textView.text = "Loading..."
                     }
 
                     override fun onFail(message: String) {
-                        textView.text = "Hata oluştu : $message"
+                        textView.text = "Error : $message"
                     }
 
                     override fun onFinish() {
-                        textView.text = "Tamamlandı"
+                        textView.text = "Done."
                     }
 
                 }
