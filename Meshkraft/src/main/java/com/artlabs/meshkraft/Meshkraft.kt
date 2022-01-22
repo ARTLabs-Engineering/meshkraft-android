@@ -3,8 +3,8 @@ package com.artlabs.meshkraft
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.artlabs.meshkraft.data.model.Product
 import com.artlabs.meshkraft.data.model.Mode
+import com.artlabs.meshkraft.data.model.Product
 import com.artlabs.meshkraft.data.network.service.Api
 import com.artlabs.meshkraft.data.network.utlis.Result
 import com.artlabs.meshkraft.data.network.utlis.callRequest
@@ -25,6 +25,14 @@ object Meshkraft {
     /** Set Api key for access */
     fun setApiKey(apiKey: String) {
         Api.setToken(apiKey)
+    }
+
+    /**
+     * @param packageName must be [STANDARD_PACKAGE] or [AR_ONLY_PACKAGE]
+     */
+    fun setPackageName(packageName: String) {
+        if (packageName == STANDARD_PACKAGE || packageName == AR_ONLY_PACKAGE)
+            this.packageName = packageName
     }
 
     /**

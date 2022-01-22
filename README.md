@@ -28,7 +28,7 @@ dependencies {
 class MyApplication:Application() {
     override fun onCreate() {
         super.onCreate()
-        Mashkraft.setApiKey("TOKEN_HERE")
+         Meshkraft.setApiKey("YOUR_API_KEY")
     }
 
 }
@@ -38,32 +38,79 @@ Make sure to replace `YOUR_API_KEY` with your application token.
 
 #### AR Session
 
+
 ```Kotlin
-Meshkraft.startArSession(context,"PRODUCT_SKU")
+ Meshkraft.startArSession(
+ context,
+ "productSKU",
+ mode, // not required
+ listener=object:IMeshkraftState{
+    override fun onLoading() {
+        // on loading
+    }
+
+    override fun onFail(message: String) {
+        // any fail on session
+    }
+
+    override fun onFinish() {
+        // session done. started intent
+    }
+ }
 ```
 
+or can use basic starter
 
 ```Kotlin
- MeshKraft.apply {
-                onFail={message ->
-                    // product fail state
-                }
-                onFinish={
-                    // start activity state
-                }
-                onLoading={
-                    // activity on loading
-                }
-            }
-```
-
-#### Device Support
-
-You can check if AR is supported on the device:
-
-```Kotlin
-Meshkraft.isARSupported(context)
+ Meshkraft.startBasicArSession(context, "productSKU")
 ```
 
 ### Java
- !coming soon...
+
+1. Add The Following Application class.
+```Java
+public class MainActivity extends Activity  {
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_main);
+
+            Meshkraft.INSTANCE.setApiKey("YOUR_API_KEY");
+        }
+}
+```
+Make sure to replace `YOUR_API_KEY` with your application token.
+
+
+#### AR Session
+
+
+```Java
+Meshkraft.INSTANCE.startArSession(
+                context,
+                "productSKU",
+                mode,// nullable
+                new IMeshkraftState() {
+                    @Override
+                    public void onLoading() {
+                        // Loading State
+                    }
+
+                    @Override
+                    public void onFail(@NonNull String message) {
+                        // onFail state
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        // finish session
+                    }
+                }
+        );
+```
+
+or can use basic starter
+
+```Java
+    Meshkraft.INSTANCE.startBasicArSession(context,"productSKU");
+```
