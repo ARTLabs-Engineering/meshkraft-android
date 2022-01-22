@@ -1,4 +1,4 @@
-package com.mertgolcu.testapp
+package com.artlabs.testapp
 
 import android.os.Bundle
 import android.widget.Button
