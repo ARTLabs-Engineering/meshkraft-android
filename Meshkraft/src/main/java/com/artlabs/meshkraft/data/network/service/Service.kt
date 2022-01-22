@@ -14,10 +14,5 @@ interface Service {
     @GET("product/{psku}/")
     fun getProduct(
         @Path("psku") sku: String
-    ): Call<com.mertgolcu.meshkraft.AR.Product>
-
-    @GET("product/{psku}/")
-    fun getProductBasic(
-        @Path("psku") sku: String
-    ): Call<com.artlabs.meshkraft.data.basic.Product>
+    ): Call<com.artlabs.meshkraft.data.model.Product>
 }

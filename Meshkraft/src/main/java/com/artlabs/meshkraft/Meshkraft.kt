@@ -3,7 +3,7 @@ package com.artlabs.meshkraft
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.artlabs.meshkraft.data.basic.Product
+import com.artlabs.meshkraft.data.model.Product
 import com.artlabs.meshkraft.data.model.Mode
 import com.artlabs.meshkraft.data.network.service.Api
 import com.artlabs.meshkraft.data.network.utlis.Result
@@ -166,7 +166,7 @@ private interface ILoadState {
  * network request and model url extension for AR session
  */
 private fun load(sku: String, loadState: ILoadState) {
-    val request = Api.service.getProductBasic(sku)
+    val request = Api.service.getProduct(sku)
     callRequest(request) {
         when (it) {
             is Result.Error -> {
