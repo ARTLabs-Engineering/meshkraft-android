@@ -20,28 +20,34 @@ class MainActivity : AppCompatActivity() {
         textView = findViewById(R.id.text_view)
         button = findViewById(R.id.button)
 
-        Meshkraft.setApiKey("API_KEY")
+        Meshkraft.setApiKey("zHozfuwdPrVadQybOIB1giYwNKqCGAvwONGQKihgEA")
 
         button.setOnClickListener {
-            Meshkraft.startArSession(
+
+            Meshkraft.startVTOSession(
                 context = this,
-                sku = "ProductSKU",
-                mode = Mode.PREFERRED_3D,
-                listener = object : IMeshkraftState {
-                    override fun onLoading() {
-                        textView.text = "Loading..."
-                    }
-
-                    override fun onFail(message: String) {
-                        textView.text = "Error : $message"
-                    }
-
-                    override fun onFinish() {
-                        textView.text = "Done."
-                    }
-
-                }
+                sku = "1127893-RYEP",
             )
+
+//            Meshkraft.startArSession(
+//                context = this,
+//                sku = "ProductSKU",
+//                mode = Mode.PREFERRED_3D,
+//                listener = object : IMeshkraftState {
+//                    override fun onLoading() {
+//                        textView.text = "Loading..."
+//                    }
+//
+//                    override fun onFail(message: String) {
+//                        textView.text = "Error : $message"
+//                    }
+//
+//                    override fun onFinish() {
+//                        textView.text = "Done."
+//                    }
+//
+//                }
+//            )
         }
 
 

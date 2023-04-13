@@ -1,10 +1,12 @@
 # Meshkraft-Android
+
 [![](https://jitpack.io/v/ARTLabs-Engineering/Meshkraft-Android.svg)](https://jitpack.io/#ARTLabs-Engineering/Meshkraft-Android)
 [![Platform](https://img.shields.io/badge/Platform-Android-green)](https://cocoapods.org/pods/Meshkraft)
 
 ART Labs introduces tailor-made AR-commerce. A specially designed, effortless, 3D-powered boost for eCommerce.
 
 ## Installation
+
 ```gradle
 allprojects {
 		repositories {
@@ -23,7 +25,9 @@ dependencies {
 ## Usage
 
 ### Kotlin
+
 1. Add The Following Application class.
+
 ```Kotlin
 class MyApplication:Application() {
     override fun onCreate() {
@@ -33,11 +37,10 @@ class MyApplication:Application() {
 
 }
 ```
+
 Make sure to replace `YOUR_API_KEY` with your application token.
 
-
 #### AR Session
-
 
 ```Kotlin
  Meshkraft.startArSession(
@@ -57,6 +60,7 @@ Make sure to replace `YOUR_API_KEY` with your application token.
         // session done. started intent
     }
  }
+)
 ```
 
 or can use basic starter
@@ -65,9 +69,19 @@ or can use basic starter
  Meshkraft.startBasicArSession(context, "productSKU")
 ```
 
+#### VTO Session
+
+```Kotlin
+ Meshkraft.startVTOSession(
+ context,
+ "productSKU"
+)
+```
+
 ### Java
 
 1. Add The Following Application class.
+
 ```Java
 public class MainActivity extends Activity  {
         @Override
@@ -79,11 +93,10 @@ public class MainActivity extends Activity  {
         }
 }
 ```
+
 Make sure to replace `YOUR_API_KEY` with your application token.
 
-
 #### AR Session
-
 
 ```Java
 Meshkraft.INSTANCE.startArSession(
