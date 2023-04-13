@@ -21,9 +21,11 @@ object Meshkraft {
 
     /** is have 2 package [STANDARD_PACKAGE] or [AR_ONLY_PACKAGE] **/
     private var packageName = STANDARD_PACKAGE
+    private var apiKey: String? = null
 
     /** Set Api key for access */
     fun setApiKey(apiKey: String) {
+        this.apiKey = apiKey
         Api.setToken(apiKey)
     }
 
@@ -92,6 +94,23 @@ object Meshkraft {
 
         }
         load(sku, state)
+    }
+
+    /**
+     * Start VTO Session
+     * @param context: Context needed to start com.artlabs.meshkraft.WebViewActivity
+     * @param sku: Product SKU
+     * @param apiKey: API key for authentication
+     */
+    fun startVTOSession(context: Context, sku: String) {
+        apiKey?.let { key ->
+            val url = "https://viewer.artlabs.ai/embed/vto?sku=$sku&token=$key"
+            val intent = Intent(context, WebViewActivity::class.java)
+            intent.putExtra("url", url)
+            context.startActivity(intent)
+        } ?: run {
+            // Handle case when API key is not set, e.g., show an error message
+        }
     }
 
     /**

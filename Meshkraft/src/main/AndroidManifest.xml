@@ -3,4 +3,16 @@
     package="com.artlabs.meshkraft">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
+    <application>
+        <activity
+            android:name="com.artlabs.meshkraft.WebViewActivity"
+            android:exported="false"
+            android:hardwareAccelerated="true"
+            android:theme="@style/MeshkraftTheme">
+        </activity>
+    </application>
 </manifest>
