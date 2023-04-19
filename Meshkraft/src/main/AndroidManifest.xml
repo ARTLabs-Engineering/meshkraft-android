@@ -10,6 +10,7 @@
         android:required="false" />
 
     <application>
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
         <uses-library
             android:name="com.google.ar.core"
             android:required="false" />
