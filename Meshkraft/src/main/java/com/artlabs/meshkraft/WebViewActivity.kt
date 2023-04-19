@@ -1,6 +1,7 @@
 package com.artlabs.meshkraft
 
 import android.Manifest
+import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.webkit.*
@@ -48,6 +49,8 @@ class WebViewActivity : AppCompatActivity() {
 
             settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
 
+            addJavascriptInterface(JavaScriptInterface(this@WebViewActivity), "AndroidInterface")
+
             webViewClient = WebViewClient()
             webChromeClient = object : WebChromeClient() {
                 override fun onPermissionRequest(request: PermissionRequest?) {
@@ -91,3 +94,15 @@ class WebViewActivity : AppCompatActivity() {
         }
     }
 }
+
+class JavaScriptInterface(private val activity: Activity) {
+    @JavascriptInterface
+    fun onEvent(event: String) {
+        if (event == "close-event") {
+            activity.runOnUiThread {
+                activity.finish()
+            }
+        }
+    }
+}
+
