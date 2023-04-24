@@ -20,18 +20,18 @@ class MainActivity : AppCompatActivity() {
         textView = findViewById(R.id.text_view)
         button = findViewById(R.id.button)
 
-        Meshkraft.setApiKey("zHozfuwdPrVadQybOIB1giYwNKqCGAvwONGQKihgEA")
+        Meshkraft.setApiKey("TOKEN")
 
         button.setOnClickListener {
 
-            Meshkraft.startVTOSession(
-                context = this,
-                sku = "1127893-RYEP",
-            )
+//            Meshkraft.startVTOSession(
+//                context = this,
+//                sku = "SKU",
+//            )
 
 //            Meshkraft.startArSession(
 //                context = this,
-//                sku = "ProductSKU",
+//                sku = "SKU",
 //                mode = Mode.PREFERRED_3D,
 //                listener = object : IMeshkraftState {
 //                    override fun onLoading() {

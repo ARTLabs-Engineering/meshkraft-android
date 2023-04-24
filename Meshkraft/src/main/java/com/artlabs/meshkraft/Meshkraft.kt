@@ -5,7 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import com.artlabs.meshkraft.data.model.Mode
 import com.artlabs.meshkraft.data.model.Product
+import com.artlabs.meshkraft.data.model.StatPayload
+
 import com.artlabs.meshkraft.data.network.service.Api
+import com.artlabs.meshkraft.data.network.service.Events.sendAnalyticsEvent
 import com.artlabs.meshkraft.data.network.utlis.Result
 import com.artlabs.meshkraft.data.network.utlis.callRequest
 
@@ -23,10 +26,27 @@ object Meshkraft {
     private var packageName = STANDARD_PACKAGE
     private var apiKey: String? = null
 
-    /** Set Api key for access */
+    /**
+     * Set API Key and initialize SDK.
+     * @param apiKey : Your API Key
+     */
     fun setApiKey(apiKey: String) {
         this.apiKey = apiKey
         Api.setToken(apiKey)
+
+        // Send INIT event
+        val initPayload = StatPayload(
+            event = StatPayload.MeshkraftEvent(
+                key = "INIT",
+                segmentation = StatPayload.MeshkraftEvent.Segmentation(sku = null)
+            )
+        )
+        sendAnalyticsEvent(initPayload)
+    }
+
+    /** Get Api key for access */
+    fun getApiKey(): String? {
+        return apiKey
     }
 
     /**
@@ -38,9 +58,9 @@ object Meshkraft {
     }
 
     /**
-     * Start Ar Session without listener and mode.
-     * @param context : Ar Session intent to ARCore so need context for intent
-     * @param sku : product sku
+     * Start AR Session without listener and mode.
+     * @param context : AR Session intent to ARCore so need context for intent
+     * @param sku : product SKU
      */
     fun startBasicArSession(
         context: Context,
@@ -52,6 +72,15 @@ object Meshkraft {
             }
 
             override fun onFinish(data: LoadedData) {
+                // Send START_AR event
+                val startArPayload = StatPayload(
+                    event = StatPayload.MeshkraftEvent(
+                        key = "START_AR",
+                        segmentation = StatPayload.MeshkraftEvent.Segmentation(sku = sku)
+                    )
+                )
+                sendAnalyticsEvent(startArPayload)
+
                 startARCore(
                     context,
                     data.url, data.name,
@@ -68,15 +97,15 @@ object Meshkraft {
     /**
      * Start Ar Session with listener and mode.
      *
-     * @param context : Ar Session intent to ARCore so need context for intent
-     * @param sku : Product Sku
+     * @param context : AR Session intent to ARCore so need context for intent
+     * @param sku : Product SKU
      * @param mode : Select [Mode]
      * @param listener : [IMeshkraftState] for session info
      */
     fun startArSession(
         context: Context,
         sku: String,
-        mode: Mode? = Mode.PREFERRED_3D,
+        mode: Mode? = Mode.AR_PREFERRED,
         listener: IMeshkraftState
     ) {
         val state = object : ILoadState {
@@ -85,7 +114,17 @@ object Meshkraft {
             }
 
             override fun onFinish(data: LoadedData) {
+                // Send START_AR event
+                val startArPayload = StatPayload(
+                    event = StatPayload.MeshkraftEvent(
+                        key = "START_AR",
+                        segmentation = StatPayload.MeshkraftEvent.Segmentation(sku = sku)
+                    )
+                )
+                sendAnalyticsEvent(startArPayload)
+
                 startARCore(context, data.url, data.name, mode, listener)
+                listener.onFinish()
             }
 
             override fun onFail(message: String) {
@@ -100,7 +139,6 @@ object Meshkraft {
      * Start VTO Session
      * @param context: Context needed to start com.artlabs.meshkraft.WebViewActivity
      * @param sku: Product SKU
-     * @param apiKey: API key for authentication
      */
     fun startVTOSession(context: Context, sku: String) {
         apiKey?.let { key ->
