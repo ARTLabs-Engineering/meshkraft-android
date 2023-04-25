@@ -67,12 +67,16 @@ class WebViewActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
-        } else {
-            super.onBackPressed()
-        }
+    override fun onDestroy() {
+        // Remove the JavaScript interface and callbacks
+        webView.removeJavascriptInterface("AndroidInterface")
+        webView.webViewClient = object : WebViewClient() {}
+        webView.webChromeClient = object : WebChromeClient() {}
+
+        // Destroy the WebView
+        webView.destroy()
+
+        super.onDestroy()
     }
 
     override fun onRequestPermissionsResult(

@@ -3,6 +3,9 @@ package com.artlabs.meshkraft
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.app.Activity
+import com.google.ar.core.ArCoreApk
+
 import com.artlabs.meshkraft.data.model.Mode
 import com.artlabs.meshkraft.data.model.Product
 import com.artlabs.meshkraft.data.model.StatPayload
@@ -16,6 +19,14 @@ import com.artlabs.meshkraft.data.network.utlis.callRequest
  * @author Mert Gölcü
  * @date 22.01.2022
  */
+
+enum class ArCoreAvailability {
+    SUPPORTED,
+    UNSUPPORTED_DEVICE_NOT_CAPABLE,
+    SUPPORTED_APK_TOO_OLD,
+    UNKNOWN_ERROR,
+    INSTALL_REQUESTED
+}
 
 /**
  * Show product AR file on Google ModelViewer with ARTLabs
@@ -56,6 +67,45 @@ object Meshkraft {
         if (packageName == STANDARD_PACKAGE || packageName == AR_ONLY_PACKAGE)
             this.packageName = packageName
     }
+
+
+
+    /**
+     * Check if the device supports ARCore and if ARCore is installed.
+     * @param activity: Activity needed for checking ARCore support and requesting install
+     * @param userRequestedInstall: Boolean to trigger installation if ARCore is not installed
+     * @return Pair<Boolean, ArCoreAvailability> where the first value indicates if AR is supported and the second value is the ArCoreAvailability status
+     */
+    fun isArSupported(activity: Activity, userRequestedInstall: Boolean): Pair<Boolean, ArCoreAvailability> {
+        val availability = ArCoreApk.getInstance().checkAvailability(activity)
+        return when (availability) {
+            ArCoreApk.Availability.SUPPORTED_INSTALLED -> {
+                Pair(true, ArCoreAvailability.SUPPORTED)
+            }
+            ArCoreApk.Availability.SUPPORTED_NOT_INSTALLED -> {
+                try {
+                    val installStatus = ArCoreApk.getInstance().requestInstall(activity, userRequestedInstall)
+                    when (installStatus) {
+                        ArCoreApk.InstallStatus.INSTALLED -> Pair(true, ArCoreAvailability.SUPPORTED)
+                        ArCoreApk.InstallStatus.INSTALL_REQUESTED -> Pair(false, ArCoreAvailability.INSTALL_REQUESTED)
+                        else -> Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
+                    }
+                } catch (e: Exception) {
+                    Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
+                }
+            }
+            ArCoreApk.Availability.SUPPORTED_APK_TOO_OLD -> {
+                Pair(false, ArCoreAvailability.SUPPORTED_APK_TOO_OLD)
+            }
+            ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE -> {
+                Pair(false, ArCoreAvailability.UNSUPPORTED_DEVICE_NOT_CAPABLE)
+            }
+            else -> {
+                Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
+            }
+        }
+    }
+
 
     /**
      * Start AR Session without listener and mode.
