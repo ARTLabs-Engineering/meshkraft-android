@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.app.Activity
-import com.google.ar.core.ArCoreApk
+
 
 import com.artlabs.meshkraft.data.model.Mode
 import com.artlabs.meshkraft.data.model.Product
@@ -68,42 +68,49 @@ object Meshkraft {
             this.packageName = packageName
     }
 
-
-
-    /**
-     * Check if the device supports ARCore and if ARCore is installed.
-     * @param activity: Activity needed for checking ARCore support and requesting install
-     * @param userRequestedInstall: Boolean to trigger installation if ARCore is not installed
-     * @return Pair<Boolean, ArCoreAvailability> where the first value indicates if AR is supported and the second value is the ArCoreAvailability status
-     */
+//    /**
+//     * Check if the device supports ARCore and if ARCore is installed.
+//     * @param activity: Activity needed for checking ARCore support and requesting install
+//     * @param userRequestedInstall: Boolean to trigger installation if ARCore is not installed
+//     * @return Pair<Boolean, ArCoreAvailability> where the first value indicates if AR is supported and the second value is the ArCoreAvailability status
+//     */
     fun isArSupported(activity: Activity, userRequestedInstall: Boolean): Pair<Boolean, ArCoreAvailability> {
-        val availability = ArCoreApk.getInstance().checkAvailability(activity)
-        return when (availability) {
-            ArCoreApk.Availability.SUPPORTED_INSTALLED -> {
-                Pair(true, ArCoreAvailability.SUPPORTED)
-            }
-            ArCoreApk.Availability.SUPPORTED_NOT_INSTALLED -> {
-                try {
-                    val installStatus = ArCoreApk.getInstance().requestInstall(activity, userRequestedInstall)
-                    when (installStatus) {
-                        ArCoreApk.InstallStatus.INSTALLED -> Pair(true, ArCoreAvailability.SUPPORTED)
-                        ArCoreApk.InstallStatus.INSTALL_REQUESTED -> Pair(false, ArCoreAvailability.INSTALL_REQUESTED)
-                        else -> Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
-                    }
-                } catch (e: Exception) {
-                    Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
-                }
-            }
-            ArCoreApk.Availability.SUPPORTED_APK_TOO_OLD -> {
-                Pair(false, ArCoreAvailability.SUPPORTED_APK_TOO_OLD)
-            }
-            ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE -> {
-                Pair(false, ArCoreAvailability.UNSUPPORTED_DEVICE_NOT_CAPABLE)
-            }
-            else -> {
-                Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
-            }
-        }
+        return Pair(true, ArCoreAvailability.SUPPORTED)
+//        val availability = ArCoreApk.getInstance().checkAvailability(activity)
+//        val arSupportPayload = StatPayload(
+//            event = StatPayload.MeshkraftEvent(
+//                key = "ARCORE_SUPPORT",
+//                segmentation = StatPayload.MeshkraftEvent.Segmentation(availability = availability.toString(), sku = null)
+//            )
+//        )
+//        sendAnalyticsEvent(arSupportPayload)
+//
+//        return when (availability) {
+//            ArCoreApk.Availability.SUPPORTED_INSTALLED -> {
+//
+//            }
+//            ArCoreApk.Availability.SUPPORTED_NOT_INSTALLED -> {
+//                try {
+//                    val installStatus = ArCoreApk.getInstance().requestInstall(activity, userRequestedInstall)
+//                    when (installStatus) {
+//                        ArCoreApk.InstallStatus.INSTALLED -> Pair(true, ArCoreAvailability.SUPPORTED)
+//                        ArCoreApk.InstallStatus.INSTALL_REQUESTED -> Pair(false, ArCoreAvailability.INSTALL_REQUESTED)
+//                        else -> Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
+//                    }
+//                } catch (e: Exception) {
+//                    Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
+//                }
+//            }
+//            ArCoreApk.Availability.SUPPORTED_APK_TOO_OLD -> {
+//                Pair(false, ArCoreAvailability.SUPPORTED_APK_TOO_OLD)
+//            }
+//            ArCoreApk.Availability.UNSUPPORTED_DEVICE_NOT_CAPABLE -> {
+//                Pair(false, ArCoreAvailability.UNSUPPORTED_DEVICE_NOT_CAPABLE)
+//            }
+//            else -> {
+//                Pair(false, ArCoreAvailability.UNKNOWN_ERROR)
+//            }
+//        }
     }
 
 
@@ -155,7 +162,7 @@ object Meshkraft {
     fun startArSession(
         context: Context,
         sku: String,
-        mode: Mode? = Mode.AR_PREFERRED,
+        mode: Mode? = Mode.PREFERRED_3D,
         listener: IMeshkraftState
     ) {
         val state = object : ILoadState {
