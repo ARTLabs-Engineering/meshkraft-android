@@ -321,17 +321,8 @@ private fun load(sku: String, loadState: ILoadState) {
  */
 private fun getUrlFromResponse(product: Product?): String {
     if (product != null) {
-        if (product.models != null) {
-            val firstOrNull = product.models.firstOrNull {
-                it.type == FILE_TYPE
-            }
-            if (firstOrNull != null) {
-                if (firstOrNull.file != null) {
-                    if (firstOrNull.file.url != null) {
-                        return firstOrNull.file.url
-                    }
-                }
-            }
+        if (product.assets?.glb?.url != null) {
+            return product.assets.glb.url
         }
     }
     return EMPTY
