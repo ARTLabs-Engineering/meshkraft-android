@@ -9,13 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.os.AsyncTask
-import java.io.*
-import java.net.URL
+
 
 
 class WebViewActivity : AppCompatActivity() {
@@ -114,54 +108,6 @@ class JavaScriptInterface(private val context: Context) {
             (context as? Activity)?.runOnUiThread {
                 context.finish()
             }
-        }
-    }
-
-    @JavascriptInterface
-    fun shareImage(imageUrl: String) {
-        DownloadImageTask { bitmap ->
-            val imageFile = createImageFile(bitmap)
-            shareImageFile(imageFile)
-        }.execute(imageUrl)
-    }
-
-    private fun createImageFile(bitmap: Bitmap): File {
-        val filename = "vto_${System.currentTimeMillis()}.jpg"
-        val outputStream: OutputStream
-
-        val imageFile = File(context.cacheDir, filename)
-        outputStream = FileOutputStream(imageFile)
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        outputStream.flush()
-        outputStream.close()
-
-        return imageFile
-    }
-
-    private fun shareImageFile(file: File) {
-        val uri = Uri.fromFile(file)
-
-        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "image/jpeg"
-            putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        context.startActivity(Intent.createChooser(shareIntent, "Share Image"))
-    }
-
-    private class DownloadImageTask(private val onImageDownloaded: (Bitmap) -> Unit) :
-        AsyncTask<String, Void, Bitmap>() {
-        override fun doInBackground(vararg params: String?): Bitmap {
-            return try {
-                val imageUrl = URL(params[0])
-                BitmapFactory.decodeStream(imageUrl.openConnection().getInputStream())
-            } catch (e: IOException) {
-                throw RuntimeException("Error downloading image", e)
-            }
-        }
-
-        override fun onPostExecute(result: Bitmap) {
-            onImageDownloaded(result)
         }
     }
 }
