@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mertgolcu.meshkraft">
+    package="com.artlabs.meshkraft">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="false" />
+
+    <application>
+        <meta-data android:name="com.google.ar.core" android:value="optional" />
+        <uses-library
+            android:name="com.google.ar.core"
+            android:required="false" />
+        <activity
+            android:name="com.artlabs.meshkraft.WebViewActivity"
+            android:exported="false"
+            android:hardwareAccelerated="true"
+            android:theme="@style/MeshkraftTheme">
+        </activity>
+    </application>
 </manifest>
