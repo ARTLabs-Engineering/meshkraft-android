@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.app.Activity
+import android.util.Log
 
 
 import com.artlabs.meshkraft.data.model.Mode
@@ -165,12 +166,15 @@ object Meshkraft {
         mode: Mode? = Mode.PREFERRED_3D,
         listener: IMeshkraftState
     ) {
+        Log.i("MeshkraftAR", "startArSession")
         val state = object : ILoadState {
             override fun onLoading() {
+                Log.i("MeshkraftAR", "onLoading")
                 listener.onLoading()
             }
 
             override fun onFinish(data: LoadedData) {
+                Log.i("MeshkraftAR", "onFinish")
                 // Send START_AR event
                 val startArPayload = StatPayload(
                     event = StatPayload.MeshkraftEvent(
@@ -185,6 +189,7 @@ object Meshkraft {
             }
 
             override fun onFail(message: String) {
+                Log.i("MeshkraftAR", "onFail")
                 listener.onFail(message)
             }
 
@@ -225,6 +230,7 @@ object Meshkraft {
         listener: IMeshkraftState? = null
     ) {
         try {
+            Log.i("MeshkraftAR", "Starting ARCore")
             val intent = Intent(Intent.ACTION_VIEW)
             val uriBuilder = Uri.parse(VIEWER_URL).buildUpon()
             uriBuilder.appendQueryParameter(FILE, url)
@@ -236,6 +242,8 @@ object Meshkraft {
             context.startActivity(intent)
             listener?.onFinish()
         } catch (ex: Exception) {
+            Log.i("MeshkraftAR", "ARCore Error")
+            Log.i("MeshkraftAR", ex.message!!)
             listener?.onFail(ex.message!!)
         }
     }
@@ -288,26 +296,40 @@ private interface ILoadState {
  * network request and model url extension for AR session
  */
 private fun load(sku: String, loadState: ILoadState) {
+    Log.i("MeshkraftAR", "load")
     val request = Api.service.getProduct(sku)
+
     callRequest(request) {
+        Log.i("MeshkraftAR", "callRequest")
         when (it) {
             is Result.Error -> {
+                Log.i("MeshkraftAR", "Result.Error")
                 loadState.onFail(it.exception.message!!)
             }
             Result.Loading -> {
+                Log.i("MeshkraftAR", "Result.Loading")
                 loadState.onLoading()
             }
             is Result.Success -> {
+                Log.i("MeshkraftAR", "Result.Success")
+                it.data?.name?.let { it1 -> Log.i("MeshkraftAR", "name :: " + it1) }
                 val url = getUrlFromResponse(it.data)
+                Log.i("MeshkraftAR", "URL is :: " + url)
                 if (url != EMPTY)
+                {
+                    Log.i("MeshkraftAR", "name is :: " + it.data?.name!!)
+
                     loadState.onFinish(
                         LoadedData(
                             url = url,
                             name = it.data?.name!!
                         )
                     )
-                else
-                    loadState.onFail("Model is not available")
+                }
+                else {
+                    Log.i("MeshkraftAR", "URL is empty")
+                    loadState.onFail("3D Model is not available")
+                }
             }
         }
     }
@@ -320,7 +342,12 @@ private fun load(sku: String, loadState: ILoadState) {
  *  > so many null checks in it and hard to handle it
  */
 private fun getUrlFromResponse(product: Product?): String {
+    Log.i("MeshkraftAR", "getUrlFromResponse")
+
     if (product != null) {
+
+        Log.i("MeshkraftAR", "Product is not null")
+        Log.i("MeshkraftAR", product.assets.toString())
         if (product.assets?.glb?.url != null) {
             return product.assets.glb.url
         }
