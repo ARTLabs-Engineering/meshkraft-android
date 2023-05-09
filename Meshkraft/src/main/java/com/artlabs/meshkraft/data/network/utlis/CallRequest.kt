@@ -15,7 +15,7 @@ fun <T> callRequest(call: Call<T>, listener: (result: Result<T?>) -> Unit) {
             val rawJson = (response.errorBody() ?: response.body() as? ResponseBody)?.string() ?: ""
             listener.invoke(
                 if (response.isSuccessful) {
-                    Result.Success(response.body(), rawJson)
+                    Result.Success(rawJson)
                 } else {
                     Result.Error(Exception(response.message()))
                 }
