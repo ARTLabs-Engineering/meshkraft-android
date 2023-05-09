@@ -319,7 +319,7 @@ private fun load(sku: String, loadState: ILoadState) {
                 Log.i("MeshkraftAR", "json")
                 Log.i("MeshkraftAR", it.json)
 
-                val product = parseProductFromJson(it.json)
+                val product = parseProductFromJson(it.json + "22")
                 Log.i("MeshkraftAR", "Parsed Product")
                 Log.i("MeshkraftAR", product.toString())
 
@@ -339,7 +339,7 @@ private fun load(sku: String, loadState: ILoadState) {
                     if (fallbackUrl.isNotEmpty()) {
                         loadState.onFinish(
                             LoadedData(
-                                url = url,
+                                url = fallbackUrl,
                                 name = ""
                             )
                         )
@@ -395,7 +395,8 @@ fun getUrlFromJson(json: String): String {
     try {
         val gson = Gson()
         val jsonObject = gson.fromJson(json, JsonObject::class.java)
-
+        Log.i("MeshkraftAR", "JsonObject")
+        Log.i("MeshkraftAR", jsonObject.toString())
         val assetsJson = jsonObject.getAsJsonObject("assets")
         if (assetsJson != null) {
             val glbJson = assetsJson.getAsJsonObject("glb")
