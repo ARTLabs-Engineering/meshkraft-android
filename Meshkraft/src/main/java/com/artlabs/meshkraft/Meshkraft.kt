@@ -319,7 +319,7 @@ private fun load(sku: String, loadState: ILoadState) {
                 Log.i("MeshkraftAR", "json")
                 Log.i("MeshkraftAR", it.json)
 
-                val product = parseProductFromJson(it.json + "22")
+                val product = parseProductFromJson(it.json)
                 Log.i("MeshkraftAR", "Parsed Product")
                 Log.i("MeshkraftAR", product.toString())
 
