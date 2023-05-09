@@ -15,6 +15,8 @@ import com.artlabs.meshkraft.data.network.service.Api
 import com.artlabs.meshkraft.data.network.service.Events.sendAnalyticsEvent
 import com.artlabs.meshkraft.data.network.utlis.Result
 import com.artlabs.meshkraft.data.network.utlis.callRequest
+import com.google.gson.Gson
+import com.google.gson.JsonObject
 
 /**
  * @author Mert Gölcü
@@ -292,6 +294,7 @@ private interface ILoadState {
     fun onFail(message: String)
 }
 
+
 /**
  * network request and model url extension for AR session
  */
@@ -312,26 +315,53 @@ private fun load(sku: String, loadState: ILoadState) {
             }
             is Result.Success -> {
                 Log.i("MeshkraftAR", "Result.Success")
-                it.data?.name?.let { it1 -> Log.i("MeshkraftAR", "name :: " + it1) }
-                val url = getUrlFromResponse(it.data)
-                Log.i("MeshkraftAR", "URL is :: " + url)
+
+                Log.i("MeshkraftAR", "json")
+                Log.i("MeshkraftAR", it.json)
+
+                val product = parseProductFromJson(it.json)
+                Log.i("MeshkraftAR", "Parsed Product")
+                Log.i("MeshkraftAR", product.toString())
+
+                val url = getUrlFromProduct(product)
+
                 if (url != EMPTY)
                 {
-                    Log.i("MeshkraftAR", "name is :: " + it.data?.name!!)
-
                     loadState.onFinish(
                         LoadedData(
                             url = url,
-                            name = it.data?.name!!
+                            name = ""
                         )
                     )
                 }
                 else {
-                    Log.i("MeshkraftAR", "URL is empty")
-                    loadState.onFail("3D Model is not available")
+                    val fallbackUrl = getUrlFromJson(it.json)
+                    if (fallbackUrl.isNotEmpty()) {
+                        loadState.onFinish(
+                            LoadedData(
+                                url = url,
+                                name = ""
+                            )
+                        )
+                    } else {
+                        Log.i("MeshkraftAR", "URL is empty")
+                        loadState.onFail("3D Model is not available")
+                    }
+
                 }
             }
         }
+    }
+}
+
+private fun parseProductFromJson(json: String): Product? {
+    Log.i("MeshkraftAR", "parseProductFromJson")
+    return try {
+        val gson = Gson()
+        gson.fromJson(json, Product::class.java)
+    } catch (e: Exception) {
+        // Handle any parsing exceptions here
+        null
     }
 }
 
@@ -341,8 +371,8 @@ private fun load(sku: String, loadState: ILoadState) {
  * why @return [EMPTY] instead of null ?
  *  > so many null checks in it and hard to handle it
  */
-private fun getUrlFromResponse(product: Product?): String {
-    Log.i("MeshkraftAR", "getUrlFromResponse")
+private fun getUrlFromProduct(product: Product?): String {
+    Log.i("MeshkraftAR", "getUrlFromProduct")
 
     if (product != null) {
 
@@ -353,6 +383,34 @@ private fun getUrlFromResponse(product: Product?): String {
         }
     }
     return EMPTY
+}
+
+
+/**
+ * Extracts the URL from the JSON string without using data classes.
+ * Returns the URL or an empty string if it's not found.
+ */
+fun getUrlFromJson(json: String): String {
+    Log.i("MeshkraftAR", "getUrlFromJson")
+    try {
+        val gson = Gson()
+        val jsonObject = gson.fromJson(json, JsonObject::class.java)
+
+        val assetsJson = jsonObject.getAsJsonObject("assets")
+        if (assetsJson != null) {
+            val glbJson = assetsJson.getAsJsonObject("glb")
+            if (glbJson != null) {
+                val url = glbJson.get("url")
+                if (url != null && !url.isJsonNull) {
+                    return url.asString
+                }
+            }
+        }
+    } catch (e: Exception) {
+        // Handle any parsing exceptions here
+    }
+
+    return ""
 }
 
 /**

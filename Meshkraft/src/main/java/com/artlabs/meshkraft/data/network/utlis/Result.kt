@@ -4,9 +4,8 @@ package com.artlabs.meshkraft.data.network.utlis
  * @author Mert Gölcü
  * @date 10.09.2021
  */
-sealed class Result<out R> {
-
-    data class Success<out T>(val data: T) : Result<T>()
+sealed class Result<out T> {
+    data class Success<out T>(val data: T?, val json: String) : Result<T>()
     data class Error(val exception: Exception) : Result<Nothing>()
     object Loading : Result<Nothing>()
 

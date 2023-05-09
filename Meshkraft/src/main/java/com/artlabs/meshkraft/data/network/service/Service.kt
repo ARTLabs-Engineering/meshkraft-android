@@ -1,6 +1,7 @@
 package com.artlabs.meshkraft.data.network.service
 
 
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -14,5 +15,5 @@ interface Service {
     @GET("product/{psku}/")
     fun getProduct(
         @Path("psku") sku: String
-    ): Call<com.artlabs.meshkraft.data.model.Product>
+    ): Call<ResponseBody>
 }
