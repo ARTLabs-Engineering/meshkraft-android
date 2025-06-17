@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdk 24
         targetSdk 33
-        versionCode 16
-        versionName "1.5.3"
+        versionCode 17
+        versionName "1.5.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -62,13 +62,13 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.artlabs.meshkraft'
                 artifactId = 'meshkraft'
-                version = '1.4.1'
+                version = '1.5.4'
             }
             debug(MavenPublication) {
                 from components.debug
                 groupId = 'com.artlabs.meshkraft'
                 artifactId = 'meshkraft-debug'
-                version = '1.4.1'
+                version = '1.5.4'
             }
         }
         repositories {

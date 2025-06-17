@@ -17,6 +17,7 @@ import com.artlabs.meshkraft.data.network.utlis.Result
 import com.artlabs.meshkraft.data.network.utlis.callRequest
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 
 /**
  * @author Mert Gölcü
@@ -30,6 +31,11 @@ enum class ArCoreAvailability {
     UNKNOWN_ERROR,
     INSTALL_REQUESTED
 }
+
+data class MeshkraftAvailability(
+    val vto: Boolean,
+    val ar: Boolean
+)
 
 /**
  * Show product AR file on Google ModelViewer with ARTLabs
@@ -69,6 +75,46 @@ object Meshkraft {
     fun setPackageName(packageName: String) {
         if (packageName == STANDARD_PACKAGE || packageName == AR_ONLY_PACKAGE)
             this.packageName = packageName
+    }
+
+    /**
+     * Check product availability for AR and VTO features
+     * @param sku Product SKU to check availability for
+     * @param token Optional API token, uses configured apiKey if not provided
+     * @param completion Callback with availability result or error message
+     */
+    fun checkAvailability(
+        sku: String,
+        token: String? = null,
+        completion: (availability: Map<String, MeshkraftAvailability>?, errorMessage: String?) -> Unit
+    ) {
+        val apiToken = token ?: apiKey
+        if (apiToken == null) {
+            completion(null, "API key not set")
+            return
+        }
+
+        val request = Api.service.getProductAvailability(sku)
+        callRequest(request) { result ->
+            when (result) {
+                is Result.Error -> {
+                    completion(null, result.exception.message ?: "Unknown Error")
+                }
+                Result.Loading -> {
+                    // Handle loading state if needed
+                }
+                is Result.Success -> {
+                    try {
+                        val gson = Gson()
+                        val type = object : TypeToken<Map<String, MeshkraftAvailability>>() {}.type
+                        val availability = gson.fromJson<Map<String, MeshkraftAvailability>>(result.json, type)
+                        completion(availability, null)
+                    } catch (e: Exception) {
+                        completion(null, "Couldn't decode data")
+                    }
+                }
+            }
+        }
     }
 
 //    /**
@@ -330,7 +376,7 @@ private fun load(sku: String, loadState: ILoadState) {
                     loadState.onFinish(
                         LoadedData(
                             url = url,
-                            name = ""
+                            name = product?.name!!
                         )
                     )
                 }

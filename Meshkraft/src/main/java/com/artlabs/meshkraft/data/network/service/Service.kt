@@ -16,4 +16,9 @@ interface Service {
     fun getProduct(
         @Path("psku") sku: String
     ): Call<ResponseBody>
+
+    @GET("product/availability/{psku}")
+    fun getProductAvailability(
+        @Path("psku") sku: String
+    ): Call<ResponseBody>
 }
