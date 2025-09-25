@@ -1,11 +1,16 @@
-# Meshkraft-Android
+---
+title: Android
+---
 
 [![](https://jitpack.io/v/ARTLabs-Engineering/Meshkraft-Android.svg)](https://jitpack.io/#ARTLabs-Engineering/Meshkraft-Android)
 [![Platform](https://img.shields.io/badge/Platform-Android-green)](https://cocoapods.org/pods/Meshkraft)
 
-ART Labs introduces tailor-made AR-commerce. A specially designed, effortless, 3D-powered boost for eCommerce.
+artlabs introduces tailor-made AR-commerce. A specially designed, effortless, 3D-powered boost for eCommerce.
+Meshkraft is the platform that enables brands to create and deploy 3D models of their products in AR.
 
 ## Installation
+
+Make sure you add jitpack repository to your project level `build.gradle` file.
 
 ```gradle
 allprojects {
@@ -16,19 +21,30 @@ allprojects {
 	}
 ```
 
+Add the following dependency to your app level `build.gradle` file.
+
 ```gradle
 dependencies {
-        implementation 'com.github.ARTLabs-Engineering.Meshkraft-Android:meshkraft:1.3.0'
+        implementation 'com.github.ARTLabs-Engineering.Meshkraft-Android:meshkraft:1.4.1'
 	}
 ```
 
 ## Usage
 
-### Kotlin
+Following features written using Kotlin.
+If you are using Java, you can use the same methods with the same parameters.
 
-1. Add The Following Application class.
+### Initialization
 
-```Kotlin
+1. Import the library
+
+```kotlin
+import com.artlabs.meshkraft.Meshkraft
+```
+
+2. Set your API key
+
+```kotlin
 class MyApplication:Application() {
     override fun onCreate() {
         super.onCreate()
@@ -38,15 +54,27 @@ class MyApplication:Application() {
 }
 ```
 
-Make sure to replace `YOUR_API_KEY` with your application token.
+:::caution
 
-#### AR Session
+Make sure to replace `YOUR_API_KEY` with your API key.
 
-```Kotlin
+:::
+
+
+
+### AR Session
+
+```kotlin
+
+import com.artlabs.meshkraft.IMeshkraftState
+import com.artlabs.meshkraft.Meshkraft
+import com.artlabs.meshkraft.data.model.Mode
+
+
  Meshkraft.startArSession(
  context,
  "productSKU",
- mode, // not required
+ mode, // not required. possible values are: PREFERRED_3D, ONLY_3D, AR_PREFERRED, AR_ONLY
  listener=object:IMeshkraftState{
     override fun onLoading() {
         // on loading
@@ -63,26 +91,27 @@ Make sure to replace `YOUR_API_KEY` with your application token.
 )
 ```
 
-or can use basic starter
+or you can use a basic starter.
 
-```Kotlin
+```kotlin
  Meshkraft.startBasicArSession(context, "productSKU")
 ```
 
-#### VTO Session
+### VTO Session
 
-```Kotlin
+```kotlin
+
  Meshkraft.startVTOSession(
  context,
- "productSKU"
-)
+ "productSKU",
+ )
 ```
 
 ### Java
 
 1. Add The Following Application class.
 
-```Java
+```java
 public class MainActivity extends Activity  {
         @Override
         protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,7 +127,7 @@ Make sure to replace `YOUR_API_KEY` with your application token.
 
 #### AR Session
 
-```Java
+```java
 Meshkraft.INSTANCE.startArSession(
                 context,
                 "productSKU",
@@ -122,8 +151,36 @@ Meshkraft.INSTANCE.startArSession(
         );
 ```
 
-or can use basic starter
+or you can a use basic starter.
 
-```Java
+```java
     Meshkraft.INSTANCE.startBasicArSession(context,"productSKU");
+```
+
+#### VTO Session
+
+```java
+Meshkraft.INSTANCE.startVTOSession(
+            context,
+            "productSKU",
+        );
+```
+
+
+### Availability API
+You can check the availability of the Meshkraft service for specific SKUs by calling:
+
+```kotlin
+Meshkraft.checkAvailability(
+    sku = "productSKU",
+    token = null // Optional, uses configured API key if not provided
+) { availability, errorMessage ->
+    if (errorMessage != null) {
+        println("Error: $errorMessage")
+    } else {
+        availability?.forEach { (sku, availability) ->
+            println("SKU: $sku, AR: ${availability.ar}, VTO: ${availability.vto}")
+        }
+    }
+}
 ```
