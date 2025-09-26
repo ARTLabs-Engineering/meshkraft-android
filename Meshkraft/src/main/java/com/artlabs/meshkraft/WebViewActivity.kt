@@ -110,5 +110,38 @@ class JavaScriptInterface(private val context: Context) {
             }
         }
     }
+    
+    @JavascriptInterface
+    fun onEvent(event: String, message: String) {
+        when (event) {
+            "close-event" -> {
+                (context as? Activity)?.runOnUiThread {
+                    context.finish()
+                }
+            }
+            "add-to-cart" -> {
+                (context as? Activity)?.runOnUiThread {
+                    handleAddToCartEvent()
+                }
+            }
+        }
+    }
+    
+    private fun handleAddToCartEvent() {
+        try {
+            // Get the product SKU from the intent
+            val activity = context as? WebViewActivity
+            val productSKU = activity?.intent?.getStringExtra("productSKU") ?: ""
+            
+            // Call the delegate
+            Meshkraft.vtoDelegate?.vtoAddToCartClicked(productSKU)
+            
+            // Close the VTO session
+            activity?.finish()
+            
+        } catch (e: Exception) {
+            android.util.Log.e("WebViewActivity", "Error handling add-to-cart event: ${e.message}")
+        }
+    }
 }
 

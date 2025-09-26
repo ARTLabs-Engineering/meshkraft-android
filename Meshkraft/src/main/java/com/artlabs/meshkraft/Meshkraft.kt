@@ -10,6 +10,7 @@ import android.util.Log
 import com.artlabs.meshkraft.data.model.Mode
 import com.artlabs.meshkraft.data.model.Product
 import com.artlabs.meshkraft.data.model.StatPayload
+import com.artlabs.meshkraft.data.model.MeshkraftVTOConfig
 
 import com.artlabs.meshkraft.data.network.service.Api
 import com.artlabs.meshkraft.data.network.service.Events.sendAnalyticsEvent
@@ -45,6 +46,9 @@ object Meshkraft {
     /** is have 2 package [STANDARD_PACKAGE] or [AR_ONLY_PACKAGE] **/
     private var packageName = STANDARD_PACKAGE
     private var apiKey: String? = null
+    
+    /** VTO delegate for handling add to cart events **/
+    var vtoDelegate: MeshkraftVTODelegate? = null
 
     /**
      * Set API Key and initialize SDK.
@@ -249,15 +253,58 @@ object Meshkraft {
      * Start VTO Session
      * @param context: Context needed to start com.artlabs.meshkraft.WebViewActivity
      * @param sku: Product SKU
+     * @param config: Optional VTO configuration for customizing the experience
      */
-    fun startVTOSession(context: Context, sku: String) {
+    fun startVTOSession(context: Context, sku: String, config: MeshkraftVTOConfig? = null) {
         apiKey?.let { key ->
-            val url = "https://viewer.artlabs.ai/embed/vto?sku=$sku&token=$key"
+            var url = "https://viewer.artlabs.ai/embed/vto?sku=$sku&token=$key"
+            
+            // Add configuration parameters if provided
+            config?.let { vtoConfig ->
+                val configUrl = buildVTOConfigUrl(vtoConfig)
+                if (configUrl.isNotEmpty()) {
+                    url += "&config=$configUrl"
+                }
+            }
+            
             val intent = Intent(context, WebViewActivity::class.java)
             intent.putExtra("url", url)
+            intent.putExtra("productSKU", sku) // Pass SKU for add to cart callback
             context.startActivity(intent)
         } ?: run {
             // Handle case when API key is not set, e.g., show an error message
+        }
+    }
+    
+    /**
+     * Build VTO configuration URL parameter
+     * Wraps the configuration in the expected nested structure for the web component
+     */
+    private fun buildVTOConfigUrl(config: MeshkraftVTOConfig): String {
+        try {
+            // Build VTO settings map
+            val vtoDict = mutableMapOf<String, Any>()
+            
+            config.fontFamily?.let { vtoDict["fontFamily"] = it }
+            config.disableUI?.let { vtoDict["disableUI"] = it }
+            config.showBanner?.let { vtoDict["showBanner"] = it }
+            config.bannerButtonText?.let { vtoDict["bannerButtonText"] = it }
+            config.logoUrl?.let { vtoDict["logoUrl"] = it }
+            config.useWatermark?.let { vtoDict["useWatermark"] = it }
+            config.accentColor?.let { vtoDict["accentColor"] = it }
+            
+            // Wrap in nested structure for web
+            val configDict = mapOf("vto" to vtoDict)
+            
+            // Convert to JSON
+            val gson = Gson()
+            val jsonString = gson.toJson(configDict)
+            
+            // URL encode the JSON string
+            return Uri.encode(jsonString)
+        } catch (e: Exception) {
+            Log.e("Meshkraft", "Error building VTO config URL: ${e.message}")
+            return ""
         }
     }
 
